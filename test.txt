@@ -1,0 +1,18 @@
+var a = 10;
+var b = 20;
+
+print "a = " + a;
+print "b = " + b;
+
+if (a < b) {
+    print "a is smaller than b";
+} else {
+    print "a is not smaller than b";
+}
+
+var i = 0;
+print "Counting to 3:";
+while (i < 3) {
+    print i;
+    i = i + 1;
+}

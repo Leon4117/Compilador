@@ -1,0 +1,14 @@
+C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\bin\Debug\net10.0\Compilador.exe
+C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\bin\Debug\net10.0\Compilador.deps.json
+C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\bin\Debug\net10.0\Compilador.runtimeconfig.json
+C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\bin\Debug\net10.0\Compilador.dll
+C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\bin\Debug\net10.0\Compilador.pdb
+C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\Compilador.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\Compilador.AssemblyInfoInputs.cache
+C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\Compilador.AssemblyInfo.cs
+C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\Compilador.csproj.CoreCompileInputs.cache
+C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\Compilador.dll
+C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\refint\Compilador.dll
+C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\Compilador.pdb
+C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\Compilador.genruntimeconfig.cache
+C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\ref\Compilador.dll
