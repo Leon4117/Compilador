@@ -1,14 +1,29 @@
-C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\bin\Debug\net10.0\Compilador.exe
-C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\bin\Debug\net10.0\Compilador.deps.json
-C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\bin\Debug\net10.0\Compilador.runtimeconfig.json
-C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\bin\Debug\net10.0\Compilador.dll
-C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\bin\Debug\net10.0\Compilador.pdb
-C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\Compilador.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\Compilador.AssemblyInfoInputs.cache
-C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\Compilador.AssemblyInfo.cs
-C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\Compilador.csproj.CoreCompileInputs.cache
-C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\Compilador.dll
-C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\refint\Compilador.dll
-C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\Compilador.pdb
-C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\Compilador.genruntimeconfig.cache
-C:\Users\Leon Aguilar\Desktop\Universidad\Compiladores\Compilador\obj\Debug\net10.0\ref\Compilador.dll
+C:/Users/Leon Aguilar/Desktop/Universidad/Compiladores/Compilador/bin/Debug/net10.0/Compilador.exe
+C:/Users/Leon Aguilar/Desktop/Universidad/Compiladores/Compilador/bin/Debug/net10.0/Compilador.deps.json
+C:/Users/Leon Aguilar/Desktop/Universidad/Compiladores/Compilador/bin/Debug/net10.0/Compilador.runtimeconfig.json
+C:/Users/Leon Aguilar/Desktop/Universidad/Compiladores/Compilador/bin/Debug/net10.0/Compilador.dll
+C:/Users/Leon Aguilar/Desktop/Universidad/Compiladores/Compilador/bin/Debug/net10.0/Compilador.pdb
+C:/Users/Leon Aguilar/Desktop/Universidad/Compiladores/Compilador/obj/Debug/net10.0/Compilador.GeneratedMSBuildEditorConfig.editorconfig
+C:/Users/Leon Aguilar/Desktop/Universidad/Compiladores/Compilador/obj/Debug/net10.0/Compilador.AssemblyInfoInputs.cache
+C:/Users/Leon Aguilar/Desktop/Universidad/Compiladores/Compilador/obj/Debug/net10.0/Compilador.AssemblyInfo.cs
+C:/Users/Leon Aguilar/Desktop/Universidad/Compiladores/Compilador/obj/Debug/net10.0/Compilador.csproj.CoreCompileInputs.cache
+C:/Users/Leon Aguilar/Desktop/Universidad/Compiladores/Compilador/obj/Debug/net10.0/Compilador.dll
+C:/Users/Leon Aguilar/Desktop/Universidad/Compiladores/Compilador/obj/Debug/net10.0/refint/Compilador.dll
+C:/Users/Leon Aguilar/Desktop/Universidad/Compiladores/Compilador/obj/Debug/net10.0/Compilador.pdb
+C:/Users/Leon Aguilar/Desktop/Universidad/Compiladores/Compilador/obj/Debug/net10.0/Compilador.genruntimeconfig.cache
+C:/Users/Leon Aguilar/Desktop/Universidad/Compiladores/Compilador/obj/Debug/net10.0/ref/Compilador.dll
+/home/daniel_gil/Documentos/Compilador/bin/Debug/net10.0/Compilador
+/home/daniel_gil/Documentos/Compilador/bin/Debug/net10.0/Compilador.deps.json
+/home/daniel_gil/Documentos/Compilador/bin/Debug/net10.0/Compilador.runtimeconfig.json
+/home/daniel_gil/Documentos/Compilador/bin/Debug/net10.0/Compilador.dll
+/home/daniel_gil/Documentos/Compilador/bin/Debug/net10.0/Compilador.pdb
+/home/daniel_gil/Documentos/Compilador/obj/Debug/net10.0/Compilador.GeneratedMSBuildEditorConfig.editorconfig
+/home/daniel_gil/Documentos/Compilador/obj/Debug/net10.0/Compilador.AssemblyInfoInputs.cache
+/home/daniel_gil/Documentos/Compilador/obj/Debug/net10.0/Compilador.AssemblyInfo.cs
+/home/daniel_gil/Documentos/Compilador/obj/Debug/net10.0/Compilador.csproj.CoreCompileInputs.cache
+/home/daniel_gil/Documentos/Compilador/obj/Debug/net10.0/Compilador.sourcelink.json
+/home/daniel_gil/Documentos/Compilador/obj/Debug/net10.0/Compilador.dll
+/home/daniel_gil/Documentos/Compilador/obj/Debug/net10.0/refint/Compilador.dll
+/home/daniel_gil/Documentos/Compilador/obj/Debug/net10.0/Compilador.pdb
+/home/daniel_gil/Documentos/Compilador/obj/Debug/net10.0/Compilador.genruntimeconfig.cache
+/home/daniel_gil/Documentos/Compilador/obj/Debug/net10.0/ref/Compilador.dll

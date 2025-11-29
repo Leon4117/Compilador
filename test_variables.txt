@@ -1,0 +1,16 @@
+// Test 1: Variable declarations and assignments
+var x = 5;
+var y = 10;
+var z = x + y;
+
+print "x = " + x;
+print "y = " + y;
+print "z = x + y = " + z;
+
+// Reassignment
+x = 20;
+print "After reassignment, x = " + x;
+
+// Multiple operations
+var result = (x + y) * 2;
+print "result = (x + y) * 2 = " + result;

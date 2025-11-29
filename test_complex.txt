@@ -1,0 +1,39 @@
+// Test 4: Complex program combining all features
+print "=== Complex Test: Fibonacci Sequence ===";
+
+var n = 10;
+var a = 0;
+var b = 1;
+var count = 0;
+
+print "First " + n + " Fibonacci numbers:";
+
+while (count < n) {
+    print a;
+    
+    var temp = a + b;
+    a = b;
+    b = temp;
+    
+    count = count + 1;
+}
+
+print "";
+print "=== Testing logical operators ===";
+
+var x = 5;
+var y = 10;
+
+if (x < 10 and y > 5) {
+    print "Both conditions are true";
+}
+
+if (x > 10 or y > 5) {
+    print "At least one condition is true";
+}
+
+print "";
+print "=== Testing string operations ===";
+var name = "Compiler";
+var version = "1.0";
+print "Welcome to " + name + " version " + version;

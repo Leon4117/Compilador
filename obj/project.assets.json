@@ -8,24 +8,25 @@
     "net10.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Leon Aguilar\\.nuget\\packages\\": {}
+    "/home/daniel_gil/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Leon Aguilar\\Desktop\\Universidad\\Compiladores\\Compilador\\Compilador.csproj",
+      "projectUniqueName": "/home/daniel_gil/Documentos/Compilador/Compilador.csproj",
       "projectName": "Compilador",
-      "projectPath": "C:\\Users\\Leon Aguilar\\Desktop\\Universidad\\Compiladores\\Compilador\\Compilador.csproj",
-      "packagesPath": "C:\\Users\\Leon Aguilar\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Leon Aguilar\\Desktop\\Universidad\\Compiladores\\Compilador\\obj\\",
+      "projectPath": "/home/daniel_gil/Documentos/Compilador/Compilador.csproj",
+      "packagesPath": "/home/daniel_gil/.nuget/packages/",
+      "outputPath": "/home/daniel_gil/Documentos/Compilador/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Leon Aguilar\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/daniel_gil/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
       ],
       "sources": {
+        "/usr/lib64/dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -65,7 +66,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/10.0.100/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

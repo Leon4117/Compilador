@@ -1,0 +1,38 @@
+// Test 2: Conditional statements (if/else)
+var a = 15;
+var b = 10;
+
+print "Testing conditionals:";
+print "a = " + a;
+print "b = " + b;
+
+// Simple if
+if (a > b) {
+    print "a is greater than b";
+}
+
+// if-else
+if (a < b) {
+    print "a is less than b";
+} else {
+    print "a is NOT less than b";
+}
+
+// Nested conditionals
+if (a > 5) {
+    print "a is greater than 5";
+    if (b > 5) {
+        print "b is also greater than 5";
+    } else {
+        print "b is NOT greater than 5";
+    }
+}
+
+// Equality tests
+if (a == 15) {
+    print "a equals 15";
+}
+
+if (a != b) {
+    print "a is different from b";
+}
