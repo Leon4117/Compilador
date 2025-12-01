@@ -13,9 +13,47 @@ namespace Compilador
             R VisitVariableExpr(Variable expr);
             R VisitAssignExpr(Assign expr);
             R VisitLogicalExpr(Logical expr);
+            R VisitArrayAccessExpr(ArrayAccess expr);
+            R VisitArrayAssignExpr(ArrayAssign expr);
         }
 
         public abstract R Accept<R>(IVisitor<R> visitor);
+
+        public class ArrayAccess : Expr
+        {
+            public Token Name { get; }
+            public Expr Index { get; }
+
+            public ArrayAccess(Token name, Expr index)
+            {
+                Name = name;
+                Index = index;
+            }
+
+            public override R Accept<R>(IVisitor<R> visitor)
+            {
+                return visitor.VisitArrayAccessExpr(this);
+            }
+        }
+
+        public class ArrayAssign : Expr
+        {
+            public Token Name { get; }
+            public Expr Index { get; }
+            public Expr Value { get; }
+
+            public ArrayAssign(Token name, Expr index, Expr value)
+            {
+                Name = name;
+                Index = index;
+                Value = value;
+            }
+
+            public override R Accept<R>(IVisitor<R> visitor)
+            {
+                return visitor.VisitArrayAssignExpr(this);
+            }
+        }
 
         public class Binary : Expr
         {
@@ -53,9 +91,9 @@ namespace Compilador
 
         public class Literal : Expr
         {
-            public object Value { get; }
+            public object? Value { get; }
 
-            public Literal(object value)
+            public Literal(object? value)
             {
                 Value = value;
             }

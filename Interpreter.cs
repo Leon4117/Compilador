@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Compilador
 {
-    public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
+    public class Interpreter : Expr.IVisitor<object?>, Stmt.IVisitor<object?>
     {
         private Environment _environment = new Environment();
 
@@ -27,12 +27,31 @@ namespace Compilador
             stmt.Accept(this);
         }
 
-        private object Evaluate(Expr expr)
+        private object? Evaluate(Expr expr)
         {
             return expr.Accept(this);
         }
 
-        public object VisitBlockStmt(Stmt.Block stmt)
+        public object? VisitDoStmt(Stmt.Do stmt)
+        {
+            do
+            {
+                Execute(stmt.Body);
+            } while (IsTruthy(Evaluate(stmt.Condition)));
+            return null;
+        }
+
+        public object? VisitArrayAccessExpr(Expr.ArrayAccess expr)
+        {
+            throw new NotImplementedException("Arrays not supported in tree-walk interpreter. Use IR backend.");
+        }
+
+        public object? VisitArrayAssignExpr(Expr.ArrayAssign expr)
+        {
+            throw new NotImplementedException("Arrays not supported in tree-walk interpreter. Use IR backend.");
+        }
+
+        public object? VisitBlockStmt(Stmt.Block stmt)
         {
             ExecuteBlock(stmt.Statements, new Environment(_environment));
             return null;
@@ -56,13 +75,13 @@ namespace Compilador
             }
         }
 
-        public object VisitExpressionStmt(Stmt.Expression stmt)
+        public object? VisitExpressionStmt(Stmt.Expression stmt)
         {
             Evaluate(stmt.Expr);
             return null;
         }
 
-        public object VisitIfStmt(Stmt.If stmt)
+        public object? VisitIfStmt(Stmt.If stmt)
         {
             if (IsTruthy(Evaluate(stmt.Condition)))
             {
@@ -75,16 +94,16 @@ namespace Compilador
             return null;
         }
 
-        public object VisitPrintStmt(Stmt.Print stmt)
+        public object? VisitPrintStmt(Stmt.Print stmt)
         {
-            object value = Evaluate(stmt.Expr);
+            object? value = Evaluate(stmt.Expr);
             Console.WriteLine(Stringify(value));
             return null;
         }
 
-        public object VisitVarStmt(Stmt.Var stmt)
+        public object? VisitVarStmt(Stmt.Var stmt)
         {
-            object value = null;
+            object? value = null;
             if (stmt.Initializer != null)
             {
                 value = Evaluate(stmt.Initializer);
@@ -94,46 +113,118 @@ namespace Compilador
             return null;
         }
 
-        public object VisitWhileStmt(Stmt.While stmt)
+        public object? VisitWhileStmt(Stmt.While stmt)
         {
-            while (IsTruthy(Evaluate(stmt.Condition)))
+            try
             {
-                Execute(stmt.Body);
+                while (IsTruthy(Evaluate(stmt.Condition)))
+                {
+                    try
+                    {
+                        Execute(stmt.Body);
+                    }
+                    catch (ContinueException)
+                    {
+                        // Loop continues
+                    }
+                }
+            }
+            catch (BreakException)
+            {
+                // Loop breaks
             }
             return null;
         }
 
-        public object VisitAssignExpr(Expr.Assign expr)
+        public object? VisitForStmt(Stmt.For stmt)
         {
-            object value = Evaluate(expr.Value);
+            Environment previous = _environment;
+            try
+            {
+                _environment = new Environment(_environment);
+
+                if (stmt.Initializer != null)
+                {
+                    Execute(stmt.Initializer);
+                }
+
+                try
+                {
+                    while (true)
+                    {
+                        if (stmt.Condition != null)
+                        {
+                            if (!IsTruthy(Evaluate(stmt.Condition))) break;
+                        }
+
+                        try
+                        {
+                            Execute(stmt.Body);
+                        }
+                        catch (ContinueException)
+                        {
+                            // Loop continues
+                        }
+
+                        if (stmt.Increment != null)
+                        {
+                            Evaluate(stmt.Increment);
+                        }
+                    }
+                }
+                catch (BreakException)
+                {
+                    // Loop breaks
+                }
+            }
+            finally
+            {
+                _environment = previous;
+            }
+            return null;
+        }
+
+        public object? VisitBreakStmt(Stmt.Break stmt)
+        {
+            throw new BreakException();
+        }
+
+        public object? VisitContinueStmt(Stmt.Continue stmt)
+        {
+            throw new ContinueException();
+        }
+
+        public object? VisitAssignExpr(Expr.Assign expr)
+        {
+            object? value = Evaluate(expr.Value);
             _environment.Assign(expr.Name, value);
             return value;
         }
 
-        public object VisitBinaryExpr(Expr.Binary expr)
+        public object? VisitBinaryExpr(Expr.Binary expr)
         {
-            object left = Evaluate(expr.Left);
-            object right = Evaluate(expr.Right);
+            object? left = Evaluate(expr.Left);
+            object? right = Evaluate(expr.Right);
 
             switch (expr.Operator.Type)
             {
                 case TokenType.GREATER:
                     CheckNumberOperands(expr.Operator, left, right);
-                    return (double)left > (double)right;
+                    return (double)left! > (double)right!;
                 case TokenType.GREATER_EQUAL:
                     CheckNumberOperands(expr.Operator, left, right);
-                    return (double)left >= (double)right;
+                    return (double)left! >= (double)right!;
                 case TokenType.LESS:
                     CheckNumberOperands(expr.Operator, left, right);
-                    return (double)left < (double)right;
+                    return (double)left! < (double)right!;
                 case TokenType.LESS_EQUAL:
                     CheckNumberOperands(expr.Operator, left, right);
-                    return (double)left <= (double)right;
+                    return (double)left! <= (double)right!;
                 case TokenType.BANG_EQUAL: return !IsEqual(left, right);
                 case TokenType.EQUAL_EQUAL: return IsEqual(left, right);
                 case TokenType.MINUS:
                     CheckNumberOperands(expr.Operator, left, right);
-                    return (double)left - (double)right;
+                    return (double)left! - (double)right!;
                 case TokenType.PLUS:
                     if (left is double && right is double)
                     {
@@ -143,36 +234,35 @@ namespace Compilador
                     {
                         return (string)left + (string)right;
                     }
-                    // Allow string concatenation with other types
+                    
                     if (left is string) return (string)left + Stringify(right);
                     if (right is string) return Stringify(left) + (string)right;
 
                     throw new RuntimeError(expr.Operator, "Operands must be two numbers or two strings.");
                 case TokenType.SLASH:
                     CheckNumberOperands(expr.Operator, left, right);
-                    return (double)left / (double)right;
+                    return (double)left! / (double)right!;
                 case TokenType.STAR:
                     CheckNumberOperands(expr.Operator, left, right);
-                    return (double)left * (double)right;
+                    return (double)left! * (double)right!;
             }
 
-            // Unreachable.
             return null;
         }
 
-        public object VisitGroupingExpr(Expr.Grouping expr)
+        public object? VisitGroupingExpr(Expr.Grouping expr)
         {
             return Evaluate(expr.Expression);
         }
 
-        public object VisitLiteralExpr(Expr.Literal expr)
+        public object? VisitLiteralExpr(Expr.Literal expr)
         {
             return expr.Value;
         }
 
-        public object VisitLogicalExpr(Expr.Logical expr)
+        public object? VisitLogicalExpr(Expr.Logical expr)
         {
-            object left = Evaluate(expr.Left);
+            object? left = Evaluate(expr.Left);
 
             if (expr.Operator.Type == TokenType.OR)
             {
@@ -186,9 +276,9 @@ namespace Compilador
             return Evaluate(expr.Right);
         }
 
-        public object VisitUnaryExpr(Expr.Unary expr)
+        public object? VisitUnaryExpr(Expr.Unary expr)
         {
-            object right = Evaluate(expr.Right);
+            object? right = Evaluate(expr.Right);
 
             switch (expr.Operator.Type)
             {
@@ -196,59 +286,58 @@ namespace Compilador
                     return !IsTruthy(right);
                 case TokenType.MINUS:
                     CheckNumberOperand(expr.Operator, right);
-                    return -(double)right;
+                    return -(double)right!;
             }
 
-            // Unreachable.
             return null;
         }
 
-        public object VisitVariableExpr(Expr.Variable expr)
+        public object? VisitVariableExpr(Expr.Variable expr)
         {
             return _environment.Get(expr.Name);
         }
 
-        private void CheckNumberOperand(Token op, object operand)
+        private void CheckNumberOperand(Token op, object? operand)
         {
             if (operand is double) return;
             throw new RuntimeError(op, "Operand must be a number.");
         }
 
-        private void CheckNumberOperands(Token op, object left, object right)
+        private void CheckNumberOperands(Token op, object? left, object? right)
         {
             if (left is double && right is double) return;
             throw new RuntimeError(op, "Operands must be numbers.");
         }
 
-        private bool IsTruthy(object obj)
+        private bool IsTruthy(object? obj)
         {
             if (obj == null) return false;
             if (obj is bool) return (bool)obj;
             return true;
         }
 
-        private bool IsEqual(object a, object b)
+        private bool IsEqual(object? a, object? b)
         {
             if (a == null && b == null) return true;
             if (a == null) return false;
             return a.Equals(b);
         }
 
-        private string Stringify(object obj)
+        private string Stringify(object? obj)
         {
             if (obj == null) return "nil";
 
             if (obj is double)
             {
-                string text = obj.ToString();
-                if (text.EndsWith(".0"))
+                string? text = obj.ToString();
+                if (text != null && text.EndsWith(".0"))
                 {
                     text = text.Substring(0, text.Length - 2);
                 }
-                return text;
+                    return text ?? "";
             }
 
-            return obj.ToString();
+            return obj.ToString() ?? "";
         }
     }
 }

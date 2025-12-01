@@ -12,9 +12,30 @@ namespace Compilador
             R VisitPrintStmt(Print stmt);
             R VisitVarStmt(Var stmt);
             R VisitWhileStmt(While stmt);
+            R VisitForStmt(For stmt);
+            R VisitBreakStmt(Break stmt);
+            R VisitContinueStmt(Continue stmt);
+            R VisitDoStmt(Do stmt);
         }
 
         public abstract R Accept<R>(IVisitor<R> visitor);
+
+        public class Do : Stmt
+        {
+            public Stmt Body { get; }
+            public Expr Condition { get; }
+
+            public Do(Stmt body, Expr condition)
+            {
+                Body = body;
+                Condition = condition;
+            }
+
+            public override R Accept<R>(IVisitor<R> visitor)
+            {
+                return visitor.VisitDoStmt(this);
+            }
+        }
 
         public class Block : Stmt
         {
@@ -50,9 +71,9 @@ namespace Compilador
         {
             public Expr Condition { get; }
             public Stmt ThenBranch { get; }
-            public Stmt ElseBranch { get; }
+            public Stmt? ElseBranch { get; }
 
-            public If(Expr condition, Stmt thenBranch, Stmt elseBranch)
+            public If(Expr condition, Stmt thenBranch, Stmt? elseBranch)
             {
                 Condition = condition;
                 ThenBranch = thenBranch;
@@ -83,12 +104,16 @@ namespace Compilador
         public class Var : Stmt
         {
             public Token Name { get; }
-            public Expr Initializer { get; }
+            public Token Type { get; }
+            public Expr? Initializer { get; }
+            public int? ArraySize { get; }
 
-            public Var(Token name, Expr initializer)
+            public Var(Token name, Token type, Expr? initializer, int? arraySize = null)
             {
                 Name = name;
+                Type = type;
                 Initializer = initializer;
+                ArraySize = arraySize;
             }
 
             public override R Accept<R>(IVisitor<R> visitor)
@@ -111,6 +136,57 @@ namespace Compilador
             public override R Accept<R>(IVisitor<R> visitor)
             {
                 return visitor.VisitWhileStmt(this);
+            }
+        }
+
+        public class For : Stmt
+        {
+            public Stmt? Initializer { get; }
+            public Expr? Condition { get; }
+            public Expr? Increment { get; }
+            public Stmt Body { get; }
+
+            public For(Stmt? initializer, Expr? condition, Expr? increment, Stmt body)
+            {
+                Initializer = initializer;
+                Condition = condition;
+                Increment = increment;
+                Body = body;
+            }
+
+            public override R Accept<R>(IVisitor<R> visitor)
+            {
+                return visitor.VisitForStmt(this);
+            }
+        }
+
+        public class Break : Stmt
+        {
+            public Token Keyword { get; }
+
+            public Break(Token keyword)
+            {
+                Keyword = keyword;
+            }
+
+            public override R Accept<R>(IVisitor<R> visitor)
+            {
+                return visitor.VisitBreakStmt(this);
+            }
+        }
+
+        public class Continue : Stmt
+        {
+            public Token Keyword { get; }
+
+            public Continue(Token keyword)
+            {
+                Keyword = keyword;
+            }
+
+            public override R Accept<R>(IVisitor<R> visitor)
+            {
+                return visitor.VisitContinueStmt(this);
             }
         }
     }

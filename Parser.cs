@@ -20,16 +20,22 @@ namespace Compilador
             List<Stmt> statements = new List<Stmt>();
             while (!IsAtEnd())
             {
-                statements.Add(Declaration());
+                Stmt? decl = Declaration();
+                if (decl != null) statements.Add(decl);
             }
             return statements;
         }
 
-        private Stmt Declaration()
+        private Stmt? Declaration()
         {
             try
             {
-                if (Match(TokenType.VAR, TokenType.INT, TokenType.BOOL, TokenType.STRING_TYPE)) return VarDeclaration();
+                if (Match(TokenType.VAR, TokenType.INT, TokenType.BOOL, TokenType.STRING_TYPE, TokenType.FLOAT)) 
+                {
+                    Token typeToken = Previous();
+                    return VarDeclaration(typeToken);
+                }
+
                 return Statement();
             }
             catch (ParseError)
@@ -39,25 +45,37 @@ namespace Compilador
             }
         }
 
-        private Stmt VarDeclaration()
+        private Stmt VarDeclaration(Token typeToken)
         {
+            int? arraySize = null;
+            if (Match(TokenType.LEFT_BRACKET))
+            {
+                Token sizeToken = Consume(TokenType.NUMBER, "Expect array size.");
+                arraySize = Convert.ToInt32(sizeToken.Literal);
+                Consume(TokenType.RIGHT_BRACKET, "Expect ']' after array size.");
+            }
+
             Token name = Consume(TokenType.IDENTIFIER, "Expect variable name.");
 
-            Expr initializer = null;
+            Expr? initializer = null;
             if (Match(TokenType.EQUAL))
             {
                 initializer = Expression();
             }
 
             Consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
-            return new Stmt.Var(name, initializer);
+            return new Stmt.Var(name, typeToken, initializer, arraySize);
         }
 
         private Stmt Statement()
         {
+            if (Match(TokenType.FOR)) return ForStatement();
             if (Match(TokenType.IF)) return IfStatement();
             if (Match(TokenType.PRINT)) return PrintStatement();
             if (Match(TokenType.WHILE)) return WhileStatement();
+            if (Match(TokenType.DO)) return DoStatement();
+            if (Match(TokenType.BREAK)) return BreakStatement();
+            if (Match(TokenType.CONTINUE)) return ContinueStatement();
             if (Match(TokenType.LEFT_BRACE)) return new Stmt.Block(Block());
 
             return ExpressionStatement();
@@ -70,7 +88,7 @@ namespace Compilador
             Consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition.");
 
             Stmt thenBranch = Statement();
-            Stmt elseBranch = null;
+            Stmt? elseBranch = null;
             if (Match(TokenType.ELSE))
             {
                 elseBranch = Statement();
@@ -102,11 +120,76 @@ namespace Compilador
 
             while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
             {
-                statements.Add(Declaration());
+                Stmt? decl = Declaration();
+                if (decl != null) statements.Add(decl);
             }
 
             Consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
             return statements;
+        }
+
+        private Stmt ForStatement()
+        {
+            Consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
+
+            Stmt? initializer;
+            if (Match(TokenType.SEMICOLON))
+            {
+                initializer = null;
+            }
+            else if (Match(TokenType.VAR, TokenType.INT, TokenType.BOOL, TokenType.STRING_TYPE))
+            {
+                Token typeToken = Previous();
+                initializer = VarDeclaration(typeToken);
+            }
+            else
+            {
+                initializer = ExpressionStatement();
+            }
+
+            Expr? condition = null;
+            if (!Check(TokenType.SEMICOLON))
+            {
+                condition = Expression();
+            }
+            Consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
+
+            Expr? increment = null;
+            if (!Check(TokenType.RIGHT_PAREN))
+            {
+                increment = Expression();
+            }
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
+
+            Stmt body = Statement();
+
+            return new Stmt.For(initializer, condition, increment, body);
+        }
+
+        private Stmt DoStatement()
+        {
+            Stmt body = Statement();
+            Consume(TokenType.WHILE, "Expect 'while' after do-loop body.");
+            Consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
+            Expr condition = Expression();
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
+            Consume(TokenType.SEMICOLON, "Expect ';' after do-while condition.");
+
+            return new Stmt.Do(body, condition);
+        }
+
+        private Stmt BreakStatement()
+        {
+            Token keyword = Previous();
+            Consume(TokenType.SEMICOLON, "Expect ';' after 'break'.");
+            return new Stmt.Break(keyword);
+        }
+
+        private Stmt ContinueStatement()
+        {
+            Token keyword = Previous();
+            Consume(TokenType.SEMICOLON, "Expect ';' after 'continue'.");
+            return new Stmt.Continue(keyword);
         }
 
         private Stmt ExpressionStatement()
@@ -134,6 +217,10 @@ namespace Compilador
                 {
                     Token name = v.Name;
                     return new Expr.Assign(name, value);
+                }
+                else if (expr is Expr.ArrayAccess a)
+                {
+                    return new Expr.ArrayAssign(a.Name, a.Index, value);
                 }
 
                 Error(equals, "Invalid assignment target.");
@@ -235,7 +322,40 @@ namespace Compilador
                 return new Expr.Unary(op, right);
             }
 
-            return Primary();
+            return Call();
+        }
+
+        private Expr Call()
+        {
+            Expr expr = Primary();
+
+            while (true)
+            {
+                if (Match(TokenType.LEFT_BRACKET))
+                {
+                    Expr index = Expression();
+                    Consume(TokenType.RIGHT_BRACKET, "Expect ']' after index.");
+                    
+                    if (expr is Expr.Variable v)
+                    {
+                        expr = new Expr.ArrayAccess(v.Name, index);
+                    }
+                    else if (expr is Expr.ArrayAccess)
+                    {
+                        throw Error(Previous(), "Multidimensional arrays not supported.");
+                    }
+                    else
+                    {
+                        throw Error(Previous(), "Expect variable before array index.");
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return expr;
         }
 
         private Expr Primary()
