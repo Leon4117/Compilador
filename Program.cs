@@ -41,7 +41,7 @@ namespace Compilador
             while (true)
             {
                 Console.Write("> ");
-                string line = Console.ReadLine();
+                string? line = Console.ReadLine();
                 if (line == null) break;
                 Run(line);
                 _hadError = false;
@@ -56,10 +56,30 @@ namespace Compilador
             Parser parser = new Parser(tokens);
             List<Stmt> statements = parser.Parse();
 
-            // Stop if there was a syntax error.
             if (_hadError) return;
 
-            _interpreter.Interpret(statements);
+            TypeChecker typeChecker = new TypeChecker();
+            typeChecker.Check(statements);
+
+            if (typeChecker.HadError) return;
+
+            IRGenerator irGenerator = new IRGenerator();
+            irGenerator.Generate(statements);
+            
+            Console.WriteLine("--- Intermediate Code ---");
+            Console.WriteLine(irGenerator.Code.ToString());
+            Console.WriteLine("-------------------------");
+
+            IRInterpreter irInterpreter = new IRInterpreter();
+            try 
+            {
+                irInterpreter.Execute(irGenerator.Code);
+            }
+            catch (Exception e)
+            {
+                _hadRuntimeError = true;
+                Console.WriteLine(e.Message);
+            }
         }
 
         public static void Error(int line, string message)

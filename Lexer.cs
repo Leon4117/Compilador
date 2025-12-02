@@ -10,6 +10,8 @@ namespace Compilador
         private int _start = 0;
         private int _current = 0;
         private int _line = 1;
+        private int _column = 1;
+        private int _startColumn = 1;
 
         private static readonly Dictionary<string, TokenType> _keywords = new Dictionary<string, TokenType>
         {
@@ -28,9 +30,16 @@ namespace Compilador
             { "true",   TokenType.TRUE },
             { "var",    TokenType.VAR },
             { "while",  TokenType.WHILE },
+            { "do",     TokenType.DO },
             { "int",    TokenType.INT },
             { "bool",   TokenType.BOOL },
-            { "string", TokenType.STRING_TYPE }
+            { "string", TokenType.STRING_TYPE },
+            { "float",  TokenType.FLOAT },
+            { "break",  TokenType.BREAK },
+            { "continue", TokenType.CONTINUE },
+            { "switch", TokenType.SWITCH },
+            { "case",   TokenType.CASE },
+            { "default", TokenType.DEFAULT }
         };
 
         public Lexer(string source)
@@ -42,12 +51,12 @@ namespace Compilador
         {
             while (!IsAtEnd())
             {
-                // We are at the beginning of the next lexeme.
                 _start = _current;
+                _startColumn = _column;
                 ScanToken();
             }
 
-            _tokens.Add(new Token(TokenType.EOF, "", null, _line));
+            _tokens.Add(new Token(TokenType.EOF, "", null, _line, _column));
             return _tokens;
         }
 
@@ -60,12 +69,15 @@ namespace Compilador
                 case ')': AddToken(TokenType.RIGHT_PAREN); break;
                 case '{': AddToken(TokenType.LEFT_BRACE); break;
                 case '}': AddToken(TokenType.RIGHT_BRACE); break;
+                case '[': AddToken(TokenType.LEFT_BRACKET); break;
+                case ']': AddToken(TokenType.RIGHT_BRACKET); break;
                 case ',': AddToken(TokenType.COMMA); break;
                 case '.': AddToken(TokenType.DOT); break;
                 case '-': AddToken(TokenType.MINUS); break;
                 case '+': AddToken(TokenType.PLUS); break;
                 case ';': AddToken(TokenType.SEMICOLON); break;
                 case '*': AddToken(TokenType.STAR); break;
+                case ':': AddToken(TokenType.COLON); break;
                 case '!': AddToken(Match('=') ? TokenType.BANG_EQUAL : TokenType.BANG); break;
                 case '=': AddToken(Match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL); break;
                 case '<': AddToken(Match('=') ? TokenType.LESS_EQUAL : TokenType.LESS); break;
@@ -73,7 +85,6 @@ namespace Compilador
                 case '/':
                     if (Match('/'))
                     {
-                        // A comment goes until the end of the line.
                         while (Peek() != '\n' && !IsAtEnd()) Advance();
                     }
                     else
@@ -85,11 +96,9 @@ namespace Compilador
                 case ' ':
                 case '\r':
                 case '\t':
-                    // Ignore whitespace.
                     break;
 
                 case '\n':
-                    _line++;
                     break;
 
                 case '"': String(); break;
@@ -125,25 +134,54 @@ namespace Compilador
 
         private void Number()
         {
+            if (Peek() == '0' && (PeekNext() == 'x' || PeekNext() == 'X'))
+            {
+                Advance();
+                Advance();
+                
+                while (IsHexDigit(Peek())) Advance();
+                
+                string hexStr = _source.Substring(_start + 2, _current - _start - 2);
+                double value = Convert.ToInt32(hexStr, 16);
+                AddToken(TokenType.NUMBER, value);
+                return;
+            }
+
             while (IsDigit(Peek())) Advance();
 
-            // Look for a fractional part.
             if (Peek() == '.' && IsDigit(PeekNext()))
             {
-                // Consume the "."
                 Advance();
 
+                while (IsDigit(Peek())) Advance();
+            }
+
+            if (Peek() == 'e' || Peek() == 'E')
+            {
+                Advance();
+                
+                if (Peek() == '+' || Peek() == '-')
+                {
+                    Advance();
+                }
+                
                 while (IsDigit(Peek())) Advance();
             }
 
             AddToken(TokenType.NUMBER, double.Parse(_source.Substring(_start, _current - _start)));
         }
 
+        private bool IsHexDigit(char c)
+        {
+            return (c >= '0' && c <= '9') ||
+                   (c >= 'a' && c <= 'f') ||
+                   (c >= 'A' && c <= 'F');
+        }
+
         private void String()
         {
             while (Peek() != '"' && !IsAtEnd())
             {
-                if (Peek() == '\n') _line++;
                 Advance();
             }
 
@@ -153,10 +191,8 @@ namespace Compilador
                 return;
             }
 
-            // The closing ".
             Advance();
 
-            // Trim the surrounding quotes.
             string value = _source.Substring(_start + 1, _current - _start - 2);
             AddToken(TokenType.STRING, value);
         }
@@ -166,7 +202,7 @@ namespace Compilador
             if (IsAtEnd()) return false;
             if (_source[_current] != expected) return false;
 
-            _current++;
+            Advance();
             return true;
         }
 
@@ -206,7 +242,17 @@ namespace Compilador
 
         private char Advance()
         {
-            return _source[_current++];
+            char c = _source[_current++];
+            if (c == '\n')
+            {
+                _line++;
+                _column = 1;
+            }
+            else
+            {
+                _column++;
+            }
+            return c;
         }
 
         private void AddToken(TokenType type)
@@ -214,10 +260,10 @@ namespace Compilador
             AddToken(type, null);
         }
 
-        private void AddToken(TokenType type, object literal)
+        private void AddToken(TokenType type, object? literal)
         {
             string text = _source.Substring(_start, _current - _start);
-            _tokens.Add(new Token(type, text, literal, _line));
+            _tokens.Add(new Token(type, text, literal, _line, _startColumn));
         }
     }
 }

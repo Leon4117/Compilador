@@ -4,25 +4,25 @@ namespace Compilador
 {
     public class Environment
     {
-        private readonly Environment _enclosing;
-        private readonly Dictionary<string, object> _values = new Dictionary<string, object>();
+        private readonly Environment? _enclosing;
+        private readonly Dictionary<string, object?> _values = new Dictionary<string, object?>();
 
         public Environment()
         {
             _enclosing = null;
         }
 
-        public Environment(Environment enclosing)
+        public Environment(Environment? enclosing)
         {
             _enclosing = enclosing;
         }
 
-        public void Define(string name, object value)
+        public void Define(string name, object? value)
         {
             _values[name] = value;
         }
 
-        public object Get(Token name)
+        public object? Get(Token name)
         {
             if (_values.ContainsKey(name.Lexeme))
             {
@@ -34,7 +34,7 @@ namespace Compilador
             throw new RuntimeError(name, "Undefined variable '" + name.Lexeme + "'.");
         }
 
-        public void Assign(Token name, object value)
+        public void Assign(Token name, object? value)
         {
             if (_values.ContainsKey(name.Lexeme))
             {
